@@ -42,7 +42,7 @@ jobs:
       - name: Populate missing Android template files (non-destructive)
         run: |
           flutter create --platforms=android --org com.example --project-name plateprep /tmp/android_tpl
-          rm -f /tmp/android_tpl/android/local.properties
+          rm -f /tmp/android_tpl/android/local.properties /tmp/android_tpl/android/*.gradle.kts /tmp/android_tpl/android/app/*.gradle.kts
           mkdir -p "$PROJECT_DIR/android"
           cp -rn /tmp/android_tpl/android/. "$PROJECT_DIR/android/"
           chmod +x "$PROJECT_DIR/android/gradlew"
