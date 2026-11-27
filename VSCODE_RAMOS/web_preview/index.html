@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PlatePrep - Mobile App Live Preview</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#4A7C59',
+            primaryLight: '#E9F1EB',
+            primaryDark: '#345A40',
+            accent: '#E87A5D',
+            accentLight: '#FDF0EC',
+            appBg: '#F9F9F6',
+            slateDark: '#2C3E50',
+            slateMedium: '#5A6B7C',
+            slateLight: '#8898AA'
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: #111827;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      color: #2C3E50;
+    }
+    .phone-container {
+      width: 412px;
+      height: 860px;
+      background: #F9F9F6;
+      border-radius: 44px;
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.7), 0 0 0 12px #262E35;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+    .notch {
+      width: 140px;
+      height: 24px;
+      background: #262E35;
+      margin: 0 auto;
+      border-bottom-left-radius: 16px;
+      border-bottom-right-radius: 16px;
+      z-index: 50;
+    }
+    .screen-content {
+      flex: 1;
+      overflow-y: auto;
+      padding-bottom: 90px;
+    }
+    .screen-content::-webkit-scrollbar {
+      display: none;
+    }
+    .circular-progress {
+      transition: stroke-dashoffset 0.5s ease;
+    }
+    .custom-toast {
+      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Mock Device Shell -->
+  <div class="phone-container">
+    <!-- Phone Top Notch -->
+    <div class="notch flex items-center justify-center">
+      <div class="w-12 h-2 bg-gray-800 rounded-full"></div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="custom-toast fixed top-12 left-1/2 -translate-x-1/2 z-50 bg-[#4A7C59] text-white px-5 py-2.5 rounded-xl shadow-lg flex items-center gap-2 text-sm font-semibold opacity-0 pointer-events-none transform -translate-y-4">
+      <span id="toastIcon">✓</span>
+      <span id="toastMsg">Action completed!</span>
+    </div>
+
+    <!-- SCREEN 1: AUTHENTICATION -->
+    <div id="screen-auth" class="screen-content p-6 flex flex-col justify-center">
+      <div class="text-center my-6">
+        <div class="w-20 h-20 bg-primary text-white rounded-3xl mx-auto flex items-center justify-center shadow-lg shadow-primary/30 mb-4">
+          <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+          </svg>
+        </div>
+        <h1 class="text-3xl font-extrabold text-slateDark tracking-tight">PlatePrep</h1>
+        <p class="text-slateMedium text-sm mt-1">Plan, Prep, and Eat Smart</p>
+      </div>
+
+      <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-200">
+        <h2 id="authModeTitle" class="text-xl font-bold text-slateDark mb-4">Sign In</h2>
+        
+        <div id="nameFieldGroup" class="mb-3.5 hidden">
+          <label class="block text-xs font-bold text-slateDark mb-1">Full Name</label>
+          <input type="text" id="authName" value="Alex Morgan" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:border-primary focus:outline-none" placeholder="Chef Alex">
+        </div>
+
+        <div class="mb-3.5">
+          <label class="block text-xs font-bold text-slateDark mb-1">Student Email</label>
+          <input type="email" id="authEmail" value="alex@student.edu" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:border-primary focus:outline-none" placeholder="student@university.edu">
+        </div>
+
+        <div class="mb-4">
+          <label class="block text-xs font-bold text-slateDark mb-1">Password</label>
+          <input type="password" id="authPass" value="password123" class="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:border-primary focus:outline-none" placeholder="••••••••">
+        </div>
+
+        <button onclick="handleAuthSubmit()" class="w-full bg-primary hover:bg-primaryDark text-white font-bold py-3.5 rounded-xl shadow-md text-sm transition">
+          <span id="authBtnText">Sign In to Kitchen</span>
+        </button>
+      </div>
+
+      <p class="text-center text-xs text-slateMedium mt-5">
+        <span id="authTogglePrompt">Don't have an account? </span>
+        <button onclick="toggleAuthMode()" class="text-primary font-bold underline ml-1" id="authToggleBtn">Create Account</button>
+      </p>
+    </div>
+
+    <!-- SCREEN 2: DASHBOARD -->
+    <div id="screen-dashboard" class="screen-content p-5 hidden">
+      <!-- Date & Greeting Header -->
+      <div class="flex justify-between items-start mb-4">
+        <div>
+          <span class="text-xs font-bold text-primary tracking-wider uppercase" id="currentDateDisplay">TODAY</span>
+          <h1 id="dashboardGreeting" class="text-2xl font-black text-slateDark tracking-tight mt-0.5">Welcome back, Alex Morgan!</h1>
+          <p class="text-xs text-slateMedium">Organize, cook, and conquer your student week.</p>
+        </div>
+        <div class="bg-primaryLight text-primary text-xs font-bold px-3 py-1.5 rounded-full flex items-center gap-1">
+          ⚡ <span id="headerDoneCount">2 of 3 Done</span>
+        </div>
+      </div>
+
+      <!-- Macro/Calorie Progress Bar Card -->
+      <div class="bg-white rounded-2xl p-5 border border-gray-200 shadow-sm mb-4">
+        <div class="flex justify-between items-center mb-3">
+          <div class="flex items-center gap-2.5">
+            <div class="p-2 bg-primaryLight text-primary rounded-xl">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <div>
+              <h3 class="text-sm font-bold text-slateDark">Daily Prep Progress</h3>
+              <p class="text-xs text-slateMedium">Target vs. Prepped Meals</p>
+            </div>
+          </div>
+          <span id="progressPercentBadge" class="text-xs font-bold px-2.5 py-1 bg-accentLight text-accent rounded-full">66%</span>
+        </div>
+
+        <div class="w-full bg-gray-100 rounded-full h-2.5 mb-3 overflow-hidden">
+          <div id="progressBarFill" class="bg-primary h-2.5 rounded-full transition-all duration-500" style="width: 66%;"></div>
+        </div>
+
+        <div class="flex justify-between items-center text-xs">
+          <span id="mealsPreppedCounter" class="font-semibold text-slateDark">✓ 2 of 3 meals prepped today</span>
+          <span id="calorieCounter" class="text-slateMedium">1330 / 2000 kcal</span>
+        </div>
+      </div>
+
+      <!-- Quick Action Banner -->
+      <div class="bg-gradient-to-r from-primary to-[#345A40] rounded-2xl p-4 text-white flex items-center justify-between shadow-md mb-5">
+        <div>
+          <h4 class="font-bold text-sm">Add Today's Meal</h4>
+          <p class="text-xs text-white/80">Schedule quick breakfast, lunch or dinner</p>
+        </div>
+        <button onclick="openAddMealModal()" class="bg-white text-primary text-xs font-bold px-3.5 py-2 rounded-xl shadow hover:bg-gray-50">
+          + Add
+        </button>
+      </div>
+
+      <!-- Today's Meal Summary -->
+      <div class="flex justify-between items-center mb-3">
+        <h3 class="text-base font-bold text-slateDark">Today's Meal Plan</h3>
+        <button onclick="switchTab('meals')" class="text-xs text-primary font-bold hover:underline">View All →</button>
+      </div>
+
+      <div id="dashboardMealsList" class="space-y-3">
+        <!-- Rendered via JavaScript -->
+      </div>
+    </div>
+
+    <!-- SCREEN 3: MEAL & RECIPE MANAGER -->
+    <div id="screen-meals" class="screen-content p-5 hidden">
+      <div class="flex justify-between items-center mb-4">
+        <div>
+          <h1 class="text-xl font-extrabold text-slateDark">Meal Manager</h1>
+          <p class="text-xs text-slateMedium">Manage schedule and recipe ingredients</p>
+        </div>
+        <button onclick="openAddMealModal()" class="bg-primary text-white text-xs font-bold px-3.5 py-2 rounded-xl shadow flex items-center gap-1">
+          <span>+</span> Add Meal
+        </button>
+      </div>
+
+      <!-- Category Filter Chips -->
+      <div class="flex gap-2 overflow-x-auto pb-2 mb-3 text-xs font-semibold no-scrollbar">
+        <button onclick="filterMeals('All')" class="meal-filter-btn px-3 py-1.5 rounded-xl bg-primary text-white" data-cat="All">All</button>
+        <button onclick="filterMeals('Breakfast')" class="meal-filter-btn px-3 py-1.5 rounded-xl bg-white text-slateDark border border-gray-200" data-cat="Breakfast">Breakfast</button>
+        <button onclick="filterMeals('Lunch')" class="meal-filter-btn px-3 py-1.5 rounded-xl bg-white text-slateDark border border-gray-200" data-cat="Lunch">Lunch</button>
+        <button onclick="filterMeals('Dinner')" class="meal-filter-btn px-3 py-1.5 rounded-xl bg-white text-slateDark border border-gray-200" data-cat="Dinner">Dinner</button>
+        <button onclick="filterMeals('Snacks')" class="meal-filter-btn px-3 py-1.5 rounded-xl bg-white text-slateDark border border-gray-200" data-cat="Snacks">Snacks</button>
+      </div>
+
+      <div id="mealsContainer" class="space-y-3">
+        <!-- Meals dynamically rendered -->
+      </div>
+    </div>
+
+    <!-- SCREEN 4: GROCERY & COOKING TIMER -->
+    <div id="screen-grocery" class="screen-content p-5 hidden">
+      <div class="mb-4">
+        <h1 class="text-xl font-extrabold text-slateDark">Grocery & Kitchen Timer</h1>
+        <p class="text-xs text-slateMedium">Auto shopping list & countdown cooking clock</p>
+      </div>
+
+      <!-- Tab Switcher (Grocery List vs Cooking Timer) -->
+      <div class="flex bg-white p-1 rounded-xl border border-gray-200 mb-4 text-xs font-bold">
+        <button id="tabBtnGrocery" onclick="switchGrocerySubTab('grocery')" class="flex-1 py-2 rounded-lg bg-primary text-white transition">
+          🛒 Grocery List
+        </button>
+        <button id="tabBtnTimer" onclick="switchGrocerySubTab('timer')" class="flex-1 py-2 rounded-lg text-slateMedium transition">
+          ⏱️ Prep Timer
+        </button>
+      </div>
+
+      <!-- SUB-TAB A: GROCERY LIST -->
+      <div id="subtab-grocery">
+        <div class="flex gap-2 mb-4">
+          <button onclick="autoGenerateGroceries()" class="flex-1 bg-primary hover:bg-primaryDark text-white text-xs font-bold py-2.5 px-3 rounded-xl shadow flex items-center justify-center gap-1.5">
+            <span>✨</span> Generate from Meals
+          </button>
+          <button onclick="promptAddCustomGrocery()" class="bg-accentLight text-accent text-xs font-bold px-3 py-2.5 rounded-xl border border-accent/20">
+            + Item
+          </button>
+        </div>
+
+        <!-- Category Filters -->
+        <div class="flex gap-2 mb-3 text-xs font-semibold">
+          <button onclick="filterGroceries('All')" class="grocery-filter-btn px-2.5 py-1 rounded-lg bg-primaryLight text-primary font-bold" data-gcat="All">All</button>
+          <button onclick="filterGroceries('Produce')" class="grocery-filter-btn px-2.5 py-1 rounded-lg bg-white border border-gray-200 text-slateDark" data-gcat="Produce">Produce</button>
+          <button onclick="filterGroceries('Dairy')" class="grocery-filter-btn px-2.5 py-1 rounded-lg bg-white border border-gray-200 text-slateDark" data-gcat="Dairy">Dairy</button>
+          <button onclick="filterGroceries('Pantry')" class="grocery-filter-btn px-2.5 py-1 rounded-lg bg-white border border-gray-200 text-slateDark" data-gcat="Pantry">Pantry</button>
+        </div>
+
+        <div id="groceryItemsList" class="space-y-2">
+          <!-- Rendered Grocery items -->
+        </div>
+      </div>
+
+      <!-- SUB-TAB B: COOKING PREP TIMER -->
+      <div id="subtab-timer" class="hidden">
+        <div class="bg-white rounded-3xl p-6 border border-gray-200 shadow-sm text-center mb-5">
+          <!-- Circular Clock -->
+          <div class="relative w-48 h-48 mx-auto flex items-center justify-center mb-6">
+            <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="42" stroke="#E9F1EB" stroke-width="8" fill="transparent" />
+              <circle id="timerProgressCircle" cx="50" cy="50" r="42" stroke="#4A7C59" stroke-width="8" stroke-dasharray="264" stroke-dashoffset="0" stroke-linecap="round" fill="transparent" class="circular-progress" />
+            </svg>
+            <div class="absolute flex flex-col items-center">
+              <span class="text-2xl">🍲</span>
+              <span id="timerDisplay" class="text-4xl font-extrabold text-slateDark tracking-tighter mt-1">25:00</span>
+              <span id="timerStatus" class="text-[11px] font-semibold text-slateLight">Ready to cook</span>
+            </div>
+          </div>
+
+          <!-- Timer Controls -->
+          <div class="flex justify-center items-center gap-4">
+            <button onclick="resetTimer()" class="w-12 h-12 rounded-full border border-gray-300 text-slateMedium flex items-center justify-center hover:bg-gray-50">
+              ↺
+            </button>
+            <button id="timerToggleBtn" onclick="toggleTimer()" class="w-36 h-12 bg-primary text-white font-bold rounded-2xl shadow-md text-sm flex items-center justify-center gap-2">
+              ▶ Start
+            </button>
+          </div>
+        </div>
+
+        <!-- Presets -->
+        <h4 class="text-xs font-bold text-slateDark uppercase tracking-wider mb-2">Preset Cooking Times</h4>
+        <div class="grid grid-cols-4 gap-2 mb-4">
+          <button onclick="setTimerPreset(10)" class="preset-btn py-2 bg-white border border-gray-200 rounded-xl text-xs font-bold text-slateDark hover:border-primary">10m</button>
+          <button onclick="setTimerPreset(15)" class="preset-btn py-2 bg-white border border-gray-200 rounded-xl text-xs font-bold text-slateDark hover:border-primary">15m</button>
+          <button onclick="setTimerPreset(25)" class="preset-btn py-2 bg-primary text-white rounded-xl text-xs font-bold">25m</button>
+          <button onclick="setTimerPreset(45)" class="preset-btn py-2 bg-white border border-gray-200 rounded-xl text-xs font-bold text-slateDark hover:border-primary">45m</button>
+        </div>
+
+        <!-- Tip -->
+        <div class="bg-primaryLight rounded-xl p-3.5 border border-primary/20 text-xs text-slateDark">
+          <div class="font-bold text-primary flex items-center gap-1 mb-1">
+            💡 Student Kitchen Tip
+          </div>
+          Prep garlic, onions, and sauces during the first 5 minutes so cooking stays stress-free!
+        </div>
+      </div>
+    </div>
+
+    <!-- SCREEN 5: PROFILE -->
+    <div id="screen-profile" class="screen-content p-5 hidden">
+      <div class="mb-4">
+        <h1 class="text-xl font-extrabold text-slateDark">Chef Profile</h1>
+      </div>
+
+      <div class="bg-white rounded-2xl p-5 border border-gray-200 shadow-sm text-center mb-4">
+        <div id="profileAvatar" class="w-16 h-16 bg-primaryLight text-primary rounded-full mx-auto flex items-center justify-center text-2xl font-black mb-3 border-2 border-primary">
+          A
+        </div>
+        <div class="flex items-center justify-center gap-2">
+          <h2 id="profileName" class="text-lg font-bold text-slateDark">Alex Morgan</h2>
+          <button onclick="openEditProfileModal()" title="Edit Username" class="px-2 py-1 rounded-lg bg-primaryLight text-primary text-[11px] font-bold hover:bg-primary hover:text-white transition">
+            ✎ Edit
+          </button>
+        </div>
+        <p id="profileEmail" class="text-xs text-slateMedium mt-1 flex items-center justify-center gap-1">
+          <span>🔒</span>
+          <span id="profileEmailText">alex@student.edu</span>
+        </p>
+      </div>
+
+      <div class="bg-white rounded-2xl p-4 border border-gray-200 mb-4">
+        <h3 class="text-xs font-bold uppercase text-slateMedium tracking-wider mb-3">Daily Goals</h3>
+        <div class="flex justify-between items-center text-sm">
+          <div class="flex items-center gap-2">
+            <span class="text-accent text-lg">🔥</span>
+            <div>
+              <p class="font-bold text-slateDark">Calorie Target</p>
+              <p id="profileCalorieTarget" class="text-xs text-slateMedium">2,000 kcal / day</p>
+            </div>
+          </div>
+          <button onclick="openCalorieModal()" class="text-xs text-primary font-bold hover:underline">Edit</button>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-2xl p-4 border border-gray-200 mb-6">
+        <h3 class="text-xs font-bold uppercase text-slateMedium tracking-wider mb-2">System</h3>
+        <div class="space-y-2 text-xs">
+          <div class="flex justify-between py-1 border-b border-gray-100">
+            <span class="text-slateMedium">Backend</span>
+            <span class="font-semibold text-primary">Cloud Firestore Realtime</span>
+          </div>
+          <div class="flex justify-between py-1 border-b border-gray-100">
+            <span class="text-slateMedium">Auth</span>
+            <span class="font-semibold text-primary">Firebase Authentication</span>
+          </div>
+          <div class="flex justify-between py-1">
+            <span class="text-slateMedium">Palette</span>
+            <span class="font-semibold text-slateDark">Sage (#4A7C59) & Orange (#E87A5D)</span>
+          </div>
+        </div>
+      </div>
+
+      <button onclick="signOut()" class="w-full py-3 border border-red-200 text-red-600 rounded-xl text-xs font-bold hover:bg-red-50">
+        Sign Out
+      </button>
+    </div>
+
+    <!-- MODAL: ADD / EDIT MEAL -->
+    <div id="mealModal" class="fixed inset-0 bg-black/50 z-50 flex items-end justify-center hidden">
+      <div class="bg-white w-full max-w-[412px] rounded-t-3xl p-6 shadow-2xl animate-slide-up">
+        <div class="w-12 h-1 bg-gray-200 rounded-full mx-auto mb-4"></div>
+        <div class="flex justify-between items-center mb-4">
+          <h3 id="mealModalTitle" class="text-lg font-bold text-slateDark">Add New Meal</h3>
+          <button onclick="closeMealModal()" class="text-slateLight hover:text-slateDark font-bold">✕</button>
+        </div>
+
+        <input type="hidden" id="modalMealId" value="">
+        <div class="space-y-3 mb-5">
+          <div>
+            <label class="block text-xs font-bold text-slateDark mb-1">Meal Title</label>
+            <input type="text" id="modalMealTitle" placeholder="e.g. Teriyaki Chicken & Broccoli" class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 text-xs focus:border-primary focus:outline-none">
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-bold text-slateDark mb-1">Category</label>
+              <select id="modalMealCategory" class="w-full px-3 py-2.5 rounded-xl border border-gray-200 text-xs focus:border-primary focus:outline-none bg-white">
+                <option value="Breakfast">Breakfast</option>
+                <option value="Lunch">Lunch</option>
+                <option value="Dinner" selected>Dinner</option>
+                <option value="Snacks">Snacks</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slateDark mb-1">Prep Time (mins)</label>
+              <input type="number" id="modalMealTime" value="20" class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 text-xs focus:border-primary focus:outline-none">
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slateDark mb-1">Ingredients (comma-separated)</label>
+            <input type="text" id="modalMealIngredients" placeholder="Chicken, Rice, Broccoli, Soy sauce, Garlic" class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 text-xs focus:border-primary focus:outline-none">
+            <span class="text-[10px] text-slateLight">Used to auto-populate the Grocery List!</span>
+          </div>
+        </div>
+
+        <button onclick="saveMealFromModal()" class="w-full bg-primary text-white py-3 rounded-xl font-bold text-sm shadow">
+          Save Meal
+        </button>
+      </div>
+    </div>
+
+    <!-- MODAL: EDIT USERNAME -->
+    <div id="profileModal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-6 hidden">
+      <div class="bg-white w-full max-w-[360px] rounded-3xl p-6 shadow-2xl">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-lg font-bold text-slateDark">Edit Username</h3>
+          <button onclick="closeEditProfileModal()" class="text-slateLight hover:text-slateDark font-bold">✕</button>
+        </div>
+
+        <div class="space-y-3 mb-5">
+          <div>
+            <label class="block text-xs font-bold text-slateDark mb-1">Username</label>
+            <input type="text" id="modalProfileName" placeholder="e.g. Chef Alex" class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 text-xs focus:border-primary focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slateDark mb-1">Email (cannot be changed)</label>
+            <div class="relative">
+              <input type="email" id="modalProfileEmail" disabled readonly class="w-full px-3.5 py-2.5 pr-8 rounded-xl border border-gray-200 bg-gray-100 text-slateMedium text-xs cursor-not-allowed">
+              <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slateLight">🔒</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex gap-2">
+          <button onclick="closeEditProfileModal()" class="flex-1 py-2.5 rounded-xl border border-gray-200 text-slateMedium font-bold text-xs hover:bg-gray-50">
+            Cancel
+          </button>
+          <button onclick="saveProfileUsername()" class="flex-1 bg-primary text-white py-2.5 rounded-xl font-bold text-xs shadow hover:bg-primaryDark">
+            Save
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL: EDIT CALORIE TARGET -->
+    <div id="calorieModal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-6 hidden">
+      <div class="bg-white w-full max-w-[360px] rounded-3xl p-6 shadow-2xl">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-lg font-bold text-slateDark">Update Calorie Target</h3>
+          <button onclick="closeCalorieModal()" class="text-slateLight hover:text-slateDark font-bold">✕</button>
+        </div>
+
+        <div class="mb-5">
+          <label class="block text-xs font-bold text-slateDark mb-1">Daily Goal (kcal)</label>
+          <input type="number" id="modalCalorieTarget" min="1" step="50" placeholder="e.g. 2200" class="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 text-xs focus:border-primary focus:outline-none">
+          <p class="text-[10px] text-slateLight mt-1">Updates your daily prep calorie progress on the Dashboard.</p>
+        </div>
+
+        <div class="flex gap-2">
+          <button onclick="closeCalorieModal()" class="flex-1 py-2.5 rounded-xl border border-gray-200 text-slateMedium font-bold text-xs hover:bg-gray-50">
+            Cancel
+          </button>
+          <button onclick="saveCalorieTarget()" class="flex-1 bg-primary text-white py-2.5 rounded-xl font-bold text-xs shadow hover:bg-primaryDark">
+            Save Target
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL: CONGRATULATIONS PREP FINISHED -->
+    <div id="congratsModal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-6 hidden">
+      <div class="bg-white rounded-3xl p-6 text-center max-w-xs w-full shadow-2xl">
+        <div class="w-20 h-20 bg-primaryLight text-primary rounded-full mx-auto flex items-center justify-center text-4xl mb-4 border-2 border-primary">
+          🎉
+        </div>
+        <h3 class="text-xl font-black text-slateDark mb-1">Ding! Prep Complete!</h3>
+        <p class="text-xs text-slateMedium mb-4">Outstanding job, Chef! Your cooking session is done. Your dish is hot, prepped, and ready to serve.</p>
+        <div class="bg-accentLight text-accent text-xs font-bold px-3 py-2 rounded-xl mb-4">
+          🔥 +50 Chef Kitchen XP
+        </div>
+        <button onclick="closeCongratsModal()" class="w-full bg-primary text-white font-bold py-3 rounded-xl text-xs shadow">
+          Serve & Enjoy!
+        </button>
+      </div>
+    </div>
+
+    <!-- BOTTOM NAVIGATION BAR (4 TABS) -->
+    <div id="bottomNav" class="absolute bottom-0 left-0 right-0 h-18 bg-white border-t border-gray-200 flex justify-around items-center px-2 py-2 z-40">
+      <button onclick="switchTab('dashboard')" class="nav-tab-btn flex flex-col items-center text-primary text-[10px] font-bold" data-tab="dashboard">
+        <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+        <span>Dashboard</span>
+      </button>
+      <button onclick="switchTab('meals')" class="nav-tab-btn flex flex-col items-center text-slateLight text-[10px] font-medium" data-tab="meals">
+        <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+        <span>Meals</span>
+      </button>
+      <button onclick="switchTab('grocery')" class="nav-tab-btn flex flex-col items-center text-slateLight text-[10px] font-medium" data-tab="grocery">
+        <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+        <span>Grocery & Timer</span>
+      </button>
+      <button onclick="switchTab('profile')" class="nav-tab-btn flex flex-col items-center text-slateLight text-[10px] font-medium" data-tab="profile">
+        <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+        <span>Profile</span>
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // In-memory data store mimicking Cloud Firestore
+    let meals = [
+      {
+        mealId: 'm1',
+        title: 'Avocado Egg Toast',
+        category: 'Breakfast',
+        ingredients: ['Eggs', 'Bread', 'Avocado', 'Salt', 'Pepper'],
+        prepTimeMinutes: 10,
+        isPrepped: true
+      },
+      {
+        mealId: 'm2',
+        title: 'Garlic Butter Chicken & Rice',
+        category: 'Lunch',
+        ingredients: ['Chicken breast', 'Rice', 'Garlic', 'Butter', 'Soy sauce'],
+        prepTimeMinutes: 25,
+        isPrepped: true
+      },
+      {
+        mealId: 'm3',
+        title: 'Creamy Spinach Pasta',
+        category: 'Dinner',
+        ingredients: ['Pasta', 'Spinach', 'Heavy cream', 'Parmesan', 'Olive oil'],
+        prepTimeMinutes: 20,
+        isPrepped: false
+      }
+    ];
+
+    let groceryItems = [
+      { itemId: 'g1', name: 'Fresh Spinach', category: 'Produce', isBought: true },
+      { itemId: 'g2', name: 'Avocado', category: 'Produce', isBought: false },
+      { itemId: 'g3', name: 'Heavy Cream', category: 'Dairy', isBought: false },
+      { itemId: 'g4', name: 'Parmesan Cheese', category: 'Dairy', isBought: false },
+      { itemId: 'g5', name: 'Jasmine Rice', category: 'Pantry', isBought: true },
+      { itemId: 'g6', name: 'Olive Oil', category: 'Pantry', isBought: false }
+    ];
+
+    let currentMealFilter = 'All';
+    let currentGroceryFilter = 'All';
+
+    let userProfile = {
+      name: 'Alex Morgan',
+      email: 'alex@student.edu',
+      calorieTarget: 2000
+    };
+
+    // Timer variables
+    let timerTotal = 25 * 60;
+    let timerRemaining = 25 * 60;
+    let timerInterval = null;
+    let isTimerRunning = false;
+
+    // Toast helper
+    function showToast(msg, icon = '✓') {
+      const toast = document.getElementById('toast');
+      document.getElementById('toastMsg').innerText = msg;
+      document.getElementById('toastIcon').innerText = icon;
+      toast.classList.remove('opacity-0', '-translate-y-4', 'pointer-events-none');
+      toast.classList.add('opacity-100', 'translate-y-0');
+      setTimeout(() => {
+        toast.classList.add('opacity-0', '-translate-y-4', 'pointer-events-none');
+        toast.classList.remove('opacity-100', 'translate-y-0');
+      }, 2500);
+    }
+
+    // Auth screen controls
+    let isSignUp = false;
+    function toggleAuthMode() {
+      isSignUp = !isSignUp;
+      document.getElementById('authModeTitle').innerText = isSignUp ? 'Create Account' : 'Sign In';
+      document.getElementById('authBtnText').innerText = isSignUp ? 'Create Account' : 'Sign In to Kitchen';
+      document.getElementById('nameFieldGroup').classList.toggle('hidden', !isSignUp);
+      document.getElementById('authTogglePrompt').innerText = isSignUp ? 'Already have an account?' : "Don't have an account?";
+      document.getElementById('authToggleBtn').innerText = isSignUp ? 'Sign In' : 'Create Account';
+    }
+
+    function handleAuthSubmit() {
+      const emailInput = document.getElementById('authEmail').value.trim();
+      const nameInput = document.getElementById('authName').value.trim();
+      if (emailInput) {
+        userProfile.email = emailInput;
+      }
+      if (isSignUp && nameInput) {
+        userProfile.name = nameInput;
+      }
+      showToast(isSignUp ? 'Account created successfully!' : `Welcome back, ${userProfile.name}!`);
+      document.getElementById('screen-auth').classList.add('hidden');
+      document.getElementById('bottomNav').classList.remove('hidden');
+      renderProfile();
+      switchTab('dashboard');
+    }
+
+    function signOut() {
+      document.querySelectorAll('.screen-content').forEach(s => s.classList.add('hidden'));
+      document.getElementById('screen-auth').classList.remove('hidden');
+      document.getElementById('bottomNav').classList.add('hidden');
+      showToast('Signed out of PlatePrep', '👋');
+    }
+
+    // Navigation Switcher
+    function switchTab(tab) {
+      document.querySelectorAll('.screen-content').forEach(s => s.classList.add('hidden'));
+      document.getElementById('screen-' + tab).classList.remove('hidden');
+
+      document.querySelectorAll('.nav-tab-btn').forEach(btn => {
+        const isCurrent = btn.getAttribute('data-tab') === tab;
+        btn.classList.toggle('text-primary', isCurrent);
+        btn.classList.toggle('font-bold', isCurrent);
+        btn.classList.toggle('text-slateLight', !isCurrent);
+        btn.classList.toggle('font-medium', !isCurrent);
+      });
+
+      if (tab === 'dashboard') renderDashboard();
+      if (tab === 'meals') renderMeals();
+      if (tab === 'grocery') renderGroceries();
+      if (tab === 'profile') renderProfile();
+    }
+
+    // Render Profile
+    function renderProfile() {
+      const name = userProfile.name || 'Chef';
+      document.getElementById('profileAvatar').innerText = name.charAt(0).toUpperCase();
+      document.getElementById('profileName').innerText = name;
+      document.getElementById('profileEmailText').innerText = userProfile.email;
+      document.getElementById('profileCalorieTarget').innerText = `${userProfile.calorieTarget.toLocaleString()} kcal / day`;
+    }
+
+    function openEditProfileModal() {
+      document.getElementById('modalProfileName').value = userProfile.name;
+      document.getElementById('modalProfileEmail').value = userProfile.email;
+      document.getElementById('profileModal').classList.remove('hidden');
+    }
+
+    function closeEditProfileModal() {
+      document.getElementById('profileModal').classList.add('hidden');
+    }
+
+    function saveProfileUsername() {
+      const newName = document.getElementById('modalProfileName').value.trim();
+      if (!newName) {
+        showToast('Please enter a username', '⚠️');
+        return;
+      }
+      userProfile.name = newName;
+      closeEditProfileModal();
+      renderProfile();
+      renderDashboard();
+      showToast(`Username updated to ${newName}`);
+    }
+
+    function openCalorieModal() {
+      document.getElementById('modalCalorieTarget').value = userProfile.calorieTarget;
+      document.getElementById('calorieModal').classList.remove('hidden');
+    }
+
+    function closeCalorieModal() {
+      document.getElementById('calorieModal').classList.add('hidden');
+    }
+
+    function saveCalorieTarget() {
+      const parsed = parseInt(document.getElementById('modalCalorieTarget').value, 10);
+      if (isNaN(parsed) || parsed <= 0) {
+        showToast('Enter a valid calorie target (> 0)', '⚠️');
+        return;
+      }
+      userProfile.calorieTarget = parsed;
+      closeCalorieModal();
+      renderProfile();
+      renderDashboard();
+      showToast(`Calorie goal updated to ${parsed.toLocaleString()} kcal`);
+    }
+
+    // Date display
+    const dateOptions = { weekday: 'long', month: 'short', day: 'numeric' };
+    document.getElementById('currentDateDisplay').innerText = new Date().toLocaleDateString('en-US', dateOptions).toUpperCase();
+
+    // Render Dashboard
+    function renderDashboard() {
+      const prepped = meals.filter(m => m.isPrepped).length;
+      const total = meals.length;
+      const pct = total > 0 ? Math.round((prepped / total) * 100) : 0;
+      const target = userProfile.calorieTarget;
+      const kcal = Math.round((pct / 100) * target);
+
+      document.getElementById('dashboardGreeting').innerText = `Welcome back, ${userProfile.name}!`;
+      document.getElementById('headerDoneCount').innerText = `${prepped} of ${total} Done`;
+      document.getElementById('progressPercentBadge').innerText = `${pct}%`;
+      document.getElementById('progressBarFill').style.width = `${pct}%`;
+      document.getElementById('mealsPreppedCounter').innerText = `✓ ${prepped} of ${total} meals prepped today`;
+      document.getElementById('calorieCounter').innerText = `${kcal} / ${target} kcal`;
+
+      const listContainer = document.getElementById('dashboardMealsList');
+      listContainer.innerHTML = '';
+
+      meals.forEach(meal => {
+        listContainer.appendChild(createMealCard(meal, true));
+      });
+    }
+
+    // Render Meals Screen
+    function renderMeals() {
+      const container = document.getElementById('mealsContainer');
+      container.innerHTML = '';
+
+      const filtered = currentMealFilter === 'All' 
+        ? meals 
+        : meals.filter(m => m.category.toLowerCase() === currentMealFilter.toLowerCase());
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-12 text-slateMedium text-xs">
+            <p class="text-3xl mb-2">🍽️</p>
+            <p class="font-bold">No ${currentMealFilter.toLowerCase()} meals found</p>
+            <p class="mt-1">Tap "+ Add Meal" to fill your plan.</p>
+          </div>
+        `;
+        return;
+      }
+
+      filtered.forEach(meal => {
+        container.appendChild(createMealCard(meal, false));
+      });
+    }
+
+    function createMealCard(meal, isDashboard) {
+      const card = document.createElement('div');
+      card.className = `bg-white rounded-2xl p-4 border border-gray-200 shadow-sm flex items-center justify-between ${meal.isPrepped ? 'opacity-85' : ''}`;
+      
+      const catColors = {
+        'Breakfast': 'bg-amber-100 text-amber-700',
+        'Lunch': 'bg-orange-100 text-accent font-bold',
+        'Dinner': 'bg-primaryLight text-primary font-bold',
+        'Snacks': 'bg-purple-100 text-purple-700'
+      };
+      const catClass = catColors[meal.category] || 'bg-gray-100 text-gray-700';
+
+      card.innerHTML = `
+        <div class="flex items-center gap-3 flex-1">
+          <button onclick="toggleMealPrepped('${meal.mealId}')" class="w-6 h-6 rounded-lg border-2 flex items-center justify-center transition ${meal.isPrepped ? 'bg-primary border-primary text-white' : 'border-gray-300 text-transparent'}">
+            ✓
+          </button>
+          <div>
+            <div class="flex items-center gap-2 mb-1">
+              <span class="text-[10px] uppercase px-2 py-0.5 rounded-md ${catClass}">${meal.category}</span>
+              <span class="text-[11px] text-slateMedium flex items-center gap-1">⏱ ${meal.prepTimeMinutes}m</span>
+              ${meal.isPrepped ? '<span class="text-[9px] bg-green-100 text-green-700 font-bold px-1.5 py-0.5 rounded">PREPPED</span>' : ''}
+            </div>
+            <h4 class="text-sm font-bold text-slateDark ${meal.isPrepped ? 'line-through text-slateMedium' : ''}">${meal.title}</h4>
+            <p class="text-[11px] text-slateLight truncate max-w-[200px]">${meal.ingredients.join(', ')}</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-1">
+          <button onclick="openEditMealModal('${meal.mealId}')" class="text-slateLight hover:text-slateDark text-xs p-1">✎</button>
+          <button onclick="deleteMeal('${meal.mealId}')" class="text-red-400 hover:text-red-600 text-xs p-1">🗑</button>
+        </div>
+      `;
+      return card;
+    }
+
+    function toggleMealPrepped(id) {
+      const meal = meals.find(m => m.mealId === id);
+      if (meal) {
+        meal.isPrepped = !meal.isPrepped;
+        showToast(meal.isPrepped ? `"${meal.title}" marked as Prepped!` : `"${meal.title}" marked pending`);
+        renderDashboard();
+        renderMeals();
+      }
+    }
+
+    function filterMeals(cat) {
+      currentMealFilter = cat;
+      document.querySelectorAll('.meal-filter-btn').forEach(btn => {
+        const isCur = btn.getAttribute('data-cat') === cat;
+        btn.classList.toggle('bg-primary', isCur);
+        btn.classList.toggle('text-white', isCur);
+        btn.classList.toggle('bg-white', !isCur);
+        btn.classList.toggle('text-slateDark', !isCur);
+      });
+      renderMeals();
+    }
+
+    // Modal Add / Edit Meal
+    function openAddMealModal() {
+      document.getElementById('mealModalTitle').innerText = 'Add New Meal';
+      document.getElementById('modalMealId').value = '';
+      document.getElementById('modalMealTitle').value = '';
+      document.getElementById('modalMealTime').value = '20';
+      document.getElementById('modalMealIngredients').value = '';
+      document.getElementById('mealModal').classList.remove('hidden');
+    }
+
+    function openEditMealModal(id) {
+      const meal = meals.find(m => m.mealId === id);
+      if (!meal) return;
+      document.getElementById('mealModalTitle').innerText = 'Edit Meal';
+      document.getElementById('modalMealId').value = meal.mealId;
+      document.getElementById('modalMealTitle').value = meal.title;
+      document.getElementById('modalMealCategory').value = meal.category;
+      document.getElementById('modalMealTime').value = meal.prepTimeMinutes;
+      document.getElementById('modalMealIngredients').value = meal.ingredients.join(', ');
+      document.getElementById('mealModal').classList.remove('hidden');
+    }
+
+    function closeMealModal() {
+      document.getElementById('mealModal').classList.add('hidden');
+    }
+
+    function saveMealFromModal() {
+      const id = document.getElementById('modalMealId').value;
+      const title = document.getElementById('modalMealTitle').value.trim();
+      const cat = document.getElementById('modalMealCategory').value;
+      const time = parseInt(document.getElementById('modalMealTime').value) || 20;
+      const ingRaw = document.getElementById('modalMealIngredients').value;
+      const ingredients = ingRaw.split(',').map(s => s.trim()).filter(Boolean);
+
+      if (!title) {
+        alert('Please enter a meal title');
+        return;
+      }
+
+      if (id) {
+        const meal = meals.find(m => m.mealId === id);
+        if (meal) {
+          meal.title = title;
+          meal.category = cat;
+          meal.prepTimeMinutes = time;
+          meal.ingredients = ingredients;
+          showToast(`Updated "${title}"`);
+        }
+      } else {
+        meals.push({
+          mealId: 'm' + Date.now(),
+          title,
+          category: cat,
+          prepTimeMinutes: time,
+          ingredients,
+          isPrepped: false
+        });
+        showToast(`Saved "${title}" to your plan!`);
+      }
+
+      closeMealModal();
+      renderDashboard();
+      renderMeals();
+    }
+
+    function deleteMeal(id) {
+      meals = meals.filter(m => m.mealId !== id);
+      showToast('Meal removed from plan');
+      renderDashboard();
+      renderMeals();
+    }
+
+    // Grocery SubTab
+    function switchGrocerySubTab(sub) {
+      document.getElementById('subtab-grocery').classList.toggle('hidden', sub !== 'grocery');
+      document.getElementById('subtab-timer').classList.toggle('hidden', sub !== 'timer');
+
+      const btnG = document.getElementById('tabBtnGrocery');
+      const btnT = document.getElementById('tabBtnTimer');
+
+      if (sub === 'grocery') {
+        btnG.className = 'flex-1 py-2 rounded-lg bg-primary text-white transition';
+        btnT.className = 'flex-1 py-2 rounded-lg text-slateMedium transition';
+      } else {
+        btnT.className = 'flex-1 py-2 rounded-lg bg-primary text-white transition';
+        btnG.className = 'flex-1 py-2 rounded-lg text-slateMedium transition';
+      }
+    }
+
+    // Smart ingredient categorization
+    function categorizeIngredient(name) {
+      const lower = name.toLowerCase();
+      const produce = ['spinach', 'avocado', 'garlic', 'onion', 'tomato', 'broccoli', 'apple', 'banana', 'lemon'];
+      const dairy = ['cream', 'milk', 'cheese', 'egg', 'butter', 'yogurt'];
+      if (produce.some(p => lower.includes(p))) return 'Produce';
+      if (dairy.some(d => lower.includes(d))) return 'Dairy';
+      return 'Pantry';
+    }
+
+    function autoGenerateGroceries() {
+      let added = 0;
+      const existing = new Set(groceryItems.map(g => g.name.toLowerCase()));
+
+      meals.forEach(meal => {
+        meal.ingredients.forEach(raw => {
+          const cleaned = raw.trim();
+          if (cleaned && !existing.has(cleaned.toLowerCase())) {
+            groceryItems.push({
+              itemId: 'g' + Date.now() + Math.random(),
+              name: cleaned,
+              category: categorizeIngredient(cleaned),
+              isBought: false
+            });
+            existing.add(cleaned.toLowerCase());
+            added++;
+          }
+        });
+      });
+
+      if (added > 0) {
+        showToast(`Generated ${added} grocery items from meal plan!`);
+      } else {
+        showToast('All planned meal ingredients already on grocery list');
+      }
+      renderGroceries();
+    }
+
+    function promptAddCustomGrocery() {
+      const name = prompt('Enter item name (e.g. Greek Yogurt, Oats):');
+      if (name && name.trim()) {
+        const cat = categorizeIngredient(name.trim());
+        groceryItems.push({
+          itemId: 'g' + Date.now(),
+          name: name.trim(),
+          category: cat,
+          isBought: false
+        });
+        showToast(`Added "${name.trim()}"`);
+        renderGroceries();
+      }
+    }
+
+    function filterGroceries(cat) {
+      currentGroceryFilter = cat;
+      document.querySelectorAll('.grocery-filter-btn').forEach(btn => {
+        const isCur = btn.getAttribute('data-gcat') === cat;
+        btn.classList.toggle('bg-primaryLight', isCur);
+        btn.classList.toggle('text-primary', isCur);
+        btn.classList.toggle('font-bold', isCur);
+        btn.classList.toggle('bg-white', !isCur);
+        btn.classList.toggle('text-slateDark', !isCur);
+      });
+      renderGroceries();
+    }
+
+    function renderGroceries() {
+      const container = document.getElementById('groceryItemsList');
+      container.innerHTML = '';
+
+      const filtered = currentGroceryFilter === 'All'
+        ? groceryItems
+        : groceryItems.filter(i => i.category === currentGroceryFilter);
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-8 text-slateMedium text-xs">
+            <p class="text-2xl mb-1">🛒</p>
+            <p>No items in this section.</p>
+          </div>
+        `;
+        return;
+      }
+
+      filtered.forEach(item => {
+        const catBadge = {
+          'Produce': 'bg-green-100 text-green-700',
+          'Dairy': 'bg-blue-100 text-blue-700',
+          'Pantry': 'bg-amber-100 text-amber-700'
+        }[item.category] || 'bg-gray-100 text-gray-700';
+
+        const row = document.createElement('div');
+        row.className = `bg-white rounded-xl p-3 border border-gray-200 flex items-center justify-between transition ${item.isBought ? 'bg-gray-50' : ''}`;
+        row.innerHTML = `
+          <div class="flex items-center gap-3 flex-1 cursor-pointer" onclick="toggleGroceryBought('${item.itemId}')">
+            <div class="w-5 h-5 rounded-md border-2 flex items-center justify-center transition ${item.isBought ? 'bg-primary border-primary text-white text-xs' : 'border-gray-300 text-transparent'}">
+              ✓
+            </div>
+            <span class="text-xs font-semibold text-slateDark ${item.isBought ? 'line-through text-slateLight' : ''}">${item.name}</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-[10px] px-2 py-0.5 rounded ${catBadge} font-bold">${item.category}</span>
+            <button onclick="deleteGrocery('${item.itemId}')" class="text-slateLight hover:text-red-500 text-xs px-1">✕</button>
+          </div>
+        `;
+        container.appendChild(row);
+      });
+    }
+
+    function toggleGroceryBought(id) {
+      const item = groceryItems.find(g => g.itemId === id);
+      if (item) {
+        item.isBought = !item.isBought;
+        showToast(item.isBought ? `Bought "${item.name}"!` : `Pending "${item.name}"`);
+        renderGroceries();
+      }
+    }
+
+    function deleteGrocery(id) {
+      groceryItems = groceryItems.filter(g => g.itemId !== id);
+      showToast('Removed grocery item');
+      renderGroceries();
+    }
+
+    // Cooking Prep Timer
+    function formatTime(sec) {
+      const m = Math.floor(sec / 60);
+      const s = sec % 60;
+      return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    }
+
+    function updateTimerUI() {
+      document.getElementById('timerDisplay').innerText = formatTime(timerRemaining);
+      const circle = document.getElementById('timerProgressCircle');
+      const offset = 264 - (264 * (timerRemaining / timerTotal));
+      circle.style.strokeDashoffset = offset;
+    }
+
+    function toggleTimer() {
+      const btn = document.getElementById('timerToggleBtn');
+      if (isTimerRunning) {
+        clearInterval(timerInterval);
+        isTimerRunning = false;
+        btn.innerHTML = '▶ Start';
+        btn.className = 'w-36 h-12 bg-primary text-white font-bold rounded-2xl shadow-md text-sm flex items-center justify-center gap-2';
+        document.getElementById('timerStatus').innerText = 'Paused';
+        showToast('Timer paused', '⏸');
+      } else {
+        isTimerRunning = true;
+        btn.innerHTML = '⏸ Pause';
+        btn.className = 'w-36 h-12 bg-accent text-white font-bold rounded-2xl shadow-md text-sm flex items-center justify-center gap-2';
+        document.getElementById('timerStatus').innerText = 'Cooking in progress...';
+        showToast('Timer running!', '⏱');
+
+        timerInterval = setInterval(() => {
+          if (timerRemaining > 0) {
+            timerRemaining--;
+            updateTimerUI();
+          } else {
+            clearInterval(timerInterval);
+            isTimerRunning = false;
+            btn.innerHTML = '▶ Start';
+            btn.className = 'w-36 h-12 bg-primary text-white font-bold rounded-2xl shadow-md text-sm flex items-center justify-center gap-2';
+            document.getElementById('timerStatus').innerText = 'Complete!';
+            showCongratsModal();
+          }
+        }, 1000);
+      }
+    }
+
+    function resetTimer() {
+      clearInterval(timerInterval);
+      isTimerRunning = false;
+      timerRemaining = timerTotal;
+      document.getElementById('timerToggleBtn').innerHTML = '▶ Start';
+      document.getElementById('timerToggleBtn').className = 'w-36 h-12 bg-primary text-white font-bold rounded-2xl shadow-md text-sm flex items-center justify-center gap-2';
+      document.getElementById('timerStatus').innerText = 'Ready to cook';
+      updateTimerUI();
+    }
+
+    function setTimerPreset(mins) {
+      clearInterval(timerInterval);
+      isTimerRunning = false;
+      timerTotal = mins * 60;
+      timerRemaining = timerTotal;
+      document.querySelectorAll('.preset-btn').forEach(btn => {
+        const isCur = btn.innerText === mins + 'm';
+        btn.classList.toggle('bg-primary', isCur);
+        btn.classList.toggle('text-white', isCur);
+        btn.classList.toggle('bg-white', !isCur);
+        btn.classList.toggle('text-slateDark', !isCur);
+      });
+      document.getElementById('timerToggleBtn').innerHTML = '▶ Start';
+      document.getElementById('timerStatus').innerText = 'Ready to cook';
+      updateTimerUI();
+      showToast(`Set timer to ${mins} minutes`);
+    }
+
+    function showCongratsModal() {
+      document.getElementById('congratsModal').classList.remove('hidden');
+    }
+
+    function closeCongratsModal() {
+      document.getElementById('congratsModal').classList.add('hidden');
+      resetTimer();
+    }
+
+    // Initialize display
+    updateTimerUI();
+    renderProfile();
+    renderDashboard();
+    renderMeals();
+    renderGroceries();
+  </script>
+</body>
+</html>
+

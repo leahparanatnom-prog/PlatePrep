@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "780845778360",
+    "project_id": "plateprep-75e85",
+    "storage_bucket": "plateprep-75e85.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:780845778360:android:74787c33bf6ac3c571fb4d",
+        "android_client_info": {
+          "package_name": "com.example.plateprep"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "780845778360-nboddmfoss4rhsref11tm0dvrih0bp03.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBr5J7ntjiB8-3bcM82TCn9IRHSedv0JA4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "780845778360-nboddmfoss4rhsref11tm0dvrih0bp03.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
